@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "563298764013",
+    "firebase_url": "https://bill-minder.firebaseio.com",
+    "project_id": "bill-minder",
+    "storage_bucket": "bill-minder.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:563298764013:android:9ce28fcd744aaa31",
+        "android_client_info": {
+          "package_name": "com.example.amasio.bill_minder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "563298764013-f6e4lqbvlq6g7qnhmtctn0ll74k4o1nj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.amasio.bill_minder",
+            "certificate_hash": "B9151FA9F54B4EECCAC9F86B1F535C74FBB13079"
+          }
+        },
+        {
+          "client_id": "563298764013-tbjb4j7c2601gc5v2i7ncvf459po8qmh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQ8emRYpRZJKvncjDVO5h4Y6kjJV-Wppo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "563298764013-tbjb4j7c2601gc5v2i7ncvf459po8qmh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
