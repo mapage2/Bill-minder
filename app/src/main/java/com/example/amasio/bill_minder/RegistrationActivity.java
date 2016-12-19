@@ -16,10 +16,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class RegistrationActivity extends AppCompatActivity {
 
-    private static final String TAG = "EmailPassword";
+    private static final String TAG = "Registration";
 
     EditText firstName;
     EditText lastName;
@@ -28,6 +30,10 @@ public class RegistrationActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseUser mUser;
+
+    private DatabaseReference mRootReference = FirebaseDatabase.getInstance().getReference();
+    private DatabaseReference mUserReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,14 +45,16 @@ public class RegistrationActivity extends AppCompatActivity {
         email = (EditText) findViewById(R.id.txtEmail);
         password = (EditText) findViewById(R.id.txtPassword);
 
+        mUserReference = mRootReference.child("User");
+
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if(user != null){
+                mUser = firebaseAuth.getCurrentUser();
+                if(mUser != null){
                     // User is signed in
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + mUser.getUid());
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
@@ -77,8 +85,8 @@ public class RegistrationActivity extends AppCompatActivity {
 
         final String fName = firstName.getText().toString();
         final String lName = lastName.getText().toString();
-        String userEmail = email.getText().toString();
-        String userPassword = password.getText().toString();
+        final String userEmail = email.getText().toString();
+        final String userPassword = password.getText().toString();
 
         Log.d(TAG, "createAccount:" + fName+" "+lName);
         if (validateForm()) {
@@ -93,6 +101,7 @@ public class RegistrationActivity extends AppCompatActivity {
                                 Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
                                 Toast.makeText(RegistrationActivity.this, "Registration Successful",
                                         Toast.LENGTH_SHORT).show();
+                                writeNewUser(fName, lName, userEmail, userPassword);
                                 Intent i = new Intent(RegistrationActivity.this, LoginActivity.class);
                                 startActivity(i);
                             }else{
@@ -181,6 +190,14 @@ public class RegistrationActivity extends AppCompatActivity {
             password.setError(null);
             return true;
         }
+    }
+
+    void writeNewUser(String fName, String lName, String userEmail, String userPassword){
+
+        String userId = mUser.getUid();
+        User user = new User(fName, lName, userEmail, userPassword);
+
+        mUserReference.child(userId).setValue(user);
     }
 }
 
