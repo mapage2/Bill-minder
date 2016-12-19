@@ -76,54 +76,74 @@ public class LoginActivity extends AppCompatActivity {
         String userPassword = password.getText().toString();
 
         Log.d(TAG, "signIn:" + userEmail);
-        if (!validateForm()) {
-            return;
+        if (validateForm()) {
+            mAuth.signInWithEmailAndPassword(userEmail, userPassword)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+
+                            progressDialog.dismiss();
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+                                Toast.makeText(LoginActivity.this, "Welcome "+userEmail, Toast.LENGTH_LONG).show();
+                                Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(i);
+                                signOut();
+                            }else{
+                                Log.e("ERROR", task.getException().toString());
+                                Toast.makeText(LoginActivity.this, "Incorrect Email or password",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        } else{
+            progressDialog.dismiss();
+            Toast.makeText(LoginActivity.this, "Login Faliure",Toast.LENGTH_SHORT).show();
         }
 
-        mAuth.signInWithEmailAndPassword(userEmail, userPassword)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
 
-                        progressDialog.dismiss();
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-                            Toast.makeText(LoginActivity.this, "Welcome "+userEmail, Toast.LENGTH_LONG).show();
-                            Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(i);
-                            signOut();
-                        }else{
-                            Log.e("ERROR", task.getException().toString());
-                            Toast.makeText(LoginActivity.this, task.getException().toString(),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
     }
 
     private boolean validateForm() {
-        boolean valid = true;
+        boolean valid;
+        String emailRegex = "([-\\w._+%]+(?:\\.[-\\w._+%]+)*@(?:[\\w-]+\\.)+[a-zA-Z]{2,7})";
 
         String userEmail = email.getText().toString();
-        if (TextUtils.isEmpty(userEmail)) {
-            email.setError("Required.");
-            valid = false;
-        } else {
-            email.setError(null);
-        }
-
         String userPassword = password.getText().toString();
-        if (TextUtils.isEmpty(userPassword)) {
-            password.setError("Required.");
-            valid = false;
-        } else {
-            password.setError(null);
-        }
 
+        if(isEmail(userEmail, emailRegex) && isPassword(userPassword)){
+
+            valid = true;
+        } else {
+            valid = false;
+        }
         return valid;
     }
 
     private void signOut() {
         mAuth.signOut();
+    }
+
+    boolean isEmail(String userEmail, String regex){
+        if (!userEmail.matches(regex)) {
+            email.setError("Enter a valid email.");
+            return false;
+        } else {
+            email.setError(null);
+            return true;
+        }
+    }
+    boolean isPassword(String userPassword) {
+
+        if (TextUtils.isEmpty(userPassword)) {
+            password.setError("Required.");
+            return false;
+        } else if (userPassword.length() < 6 || userPassword.length() > 15) {
+            password.setError("This password is too long");
+            return false;
+        } else {
+            password.setError(null);
+            return true;
+        }
     }
 }

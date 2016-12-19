@@ -81,49 +81,50 @@ public class RegistrationActivity extends AppCompatActivity {
         String userPassword = password.getText().toString();
 
         Log.d(TAG, "createAccount:" + fName+" "+lName);
-        if (!validateForm()) {
-            return;
-        }
+        if (validateForm()) {
+            (mAuth.createUserWithEmailAndPassword(userEmail, userPassword))
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
 
-        (mAuth.createUserWithEmailAndPassword(userEmail, userPassword))
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
+                            progressDialog.dismiss();
 
-                        progressDialog.dismiss();
-
-                        if(task.isSuccessful()){
-                            Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
-                            Toast.makeText(RegistrationActivity.this, "Registration Successful",
-                                    Toast.LENGTH_SHORT).show();
-                            Intent i = new Intent(RegistrationActivity.this, LoginActivity.class);
-                            startActivity(i);
-                        }else{
-                            Log.e("ERROR", task.getException().toString());
-                            Toast.makeText(RegistrationActivity.this, task.getException().toString(),
-                                    Toast.LENGTH_SHORT).show();
+                            if(task.isSuccessful()){
+                                Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+                                Toast.makeText(RegistrationActivity.this, "Registration Successful",
+                                        Toast.LENGTH_SHORT).show();
+                                Intent i = new Intent(RegistrationActivity.this, LoginActivity.class);
+                                startActivity(i);
+                            }else{
+                                Log.e("ERROR", task.getException().toString());
+                                Toast.makeText(RegistrationActivity.this, task.getException().toString(),
+                                        Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
+                    });
+        } else{
+            progressDialog.dismiss();
+            Toast.makeText(RegistrationActivity.this, "Invalid input", Toast.LENGTH_SHORT);
+        }
     }
 
     private boolean validateForm() {
-        boolean valid = true;
 
+        boolean valid;
+
+        String nameRegex = "[A-Z][a-z]+( [A-Z][a-z]+)?";
+        String emailRegex = "([-\\w._+%]+(?:\\.[-\\w._+%]+)*@(?:[\\w-]+\\.)+[a-zA-Z]{2,7})";
+
+        String userFName = firstName.getText().toString();
+        String userLName = lastName.getText().toString();
         String userEmail = email.getText().toString();
-        if (TextUtils.isEmpty(userEmail)) {
-            email.setError("Required.");
-            valid = false;
-        } else {
-            email.setError(null);
-        }
-
         String userPassword = password.getText().toString();
-        if (TextUtils.isEmpty(userPassword)) {
-            password.setError("Required.");
+
+        if(isFirstName(userFName, nameRegex) && isLastName(userLName, nameRegex) && isEmail(userEmail, emailRegex)
+                && isPassword(userPassword)){
+            valid = true;
+        } else{
             valid = false;
-        } else {
-            password.setError(null);
         }
 
         return valid;
@@ -133,5 +134,54 @@ public class RegistrationActivity extends AppCompatActivity {
         mAuth.signOut();
     }
 
+    boolean isFirstName(String name, String regex){
+        if(name.length()>25){
+            firstName.setError("Name length under 25 characters");
+            return false;
+        } else if(!name.matches(regex)){
+            firstName.setError("Please enter a valid first name");
+            return false;
+        } else{
+            firstName.setError(null);
+            return true;
+        }
+    }
+
+    boolean isLastName(String name, String regex){
+        if(name.length()>25){
+            lastName.setError("Name length under 25 characters");
+            return false;
+        } else if(!name.matches(regex)){
+            lastName.setError("Please enter a valid last name");
+            return false;
+        } else{
+            lastName.setError(null);
+            return true;
+        }
+    }
+
+    boolean isEmail(String userEmail, String regex){
+        if (!userEmail.matches(regex)) {
+            email.setError("Enter a valid email.");
+            return false;
+        } else {
+            email.setError(null);
+            return true;
+        }
+    }
+    boolean isPassword(String userPassword){
+
+        if (TextUtils.isEmpty(userPassword)) {
+            password.setError("Required.");
+            return false;
+        } else if(userPassword.length()<6 || userPassword.length()>15){
+            password.setError("Password length between 6-15 characters");
+            return false;
+        } else {
+            password.setError(null);
+            return true;
+        }
+    }
 }
+
 
