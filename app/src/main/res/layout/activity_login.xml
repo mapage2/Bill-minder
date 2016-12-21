@@ -40,9 +40,18 @@
         android:layout_height="wrap_content"
         android:id="@+id/btnLogin"
         android:onClick="signIn"
+        android:layout_marginTop="55dp"
+        android:layout_below="@+id/google_login"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/google_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="84dp"
         android:layout_below="@+id/txtPassword"
-        android:layout_marginTop="104dp"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true" />
 
 </RelativeLayout>

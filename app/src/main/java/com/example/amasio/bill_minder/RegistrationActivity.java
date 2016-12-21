@@ -106,8 +106,16 @@ public class RegistrationActivity extends AppCompatActivity {
                                 startActivity(i);
                             }else{
                                 Log.e("ERROR", task.getException().toString());
-                                Toast.makeText(RegistrationActivity.this, task.getException().toString(),
-                                        Toast.LENGTH_SHORT).show();
+                                if(task.getException().toString().contains("AuthUserCollisionException")){
+                                    Toast.makeText(RegistrationActivity.this, "Email already exists",
+                                            Toast.LENGTH_SHORT).show();
+                                    email.getText().clear();
+                                    password.getText().clear();
+                                }else{
+                                    Toast.makeText(RegistrationActivity.this, task.getException().toString(),
+                                            Toast.LENGTH_SHORT).show();
+                                }
+
                             }
                         }
                     });
