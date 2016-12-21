@@ -11,6 +11,8 @@ public class User {
     private String email;
     private String password;
 
+    private String displayName;
+
     public User(){
         setFirstName("");
         setLastName("");
@@ -25,6 +27,10 @@ public class User {
         setPassword(pWord);
     }
 
+    public User(String name, String email){
+        this.setDisplayName(name);
+        this.setEmail(email);
+    }
 
     public String getFirstName() {
         return firstName;
@@ -40,6 +46,14 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getDisplayName(){
+        return displayName;
+    }
+
+    public void setDisplayName(String name){
+        this.displayName = name;
     }
 
     public String getEmail() {
@@ -58,7 +72,8 @@ public class User {
         this.password = password;
     }
 
-    @Override public String toString(){
+    @Override
+    public String toString(){
 
         String user = getFirstName() +" "+getLastName()+" "+getEmail()+" "+getPassword();
         return user;

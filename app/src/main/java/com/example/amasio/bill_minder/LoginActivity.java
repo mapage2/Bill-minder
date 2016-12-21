@@ -27,8 +27,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener {
@@ -77,7 +80,7 @@ public class LoginActivity extends AppCompatActivity implements
         .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-
+        mUserReference = mRootReference.child("User");
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -188,9 +191,9 @@ public class LoginActivity extends AppCompatActivity implements
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
                         Toast.makeText(LoginActivity.this, "Welcome "+mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
                         Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                        writeNewAuthenticatedUser(mAuth.getCurrentUser());
                         startActivity(i);
                         signOut();
-
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
@@ -248,14 +251,43 @@ public class LoginActivity extends AppCompatActivity implements
         }
     }
 
+    //FINISH IMPLEMENTATION
+    public void writeNewAuthenticatedUser(FirebaseUser authUser){
+
+        final String userId = authUser.getUid();
+        String name = authUser.getDisplayName();
+        String email = authUser.getEmail();
+
+        final User user = new User(name, email);
+
+        mUserReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.child(userId).exists()) {
+
+                    Log.d(TAG, "User exists in database");
+                } else {
+
+                    mUserReference.child(userId).setValue(user);
+                    Log.d(TAG, "Database added user:" +userId);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+                Log.e("ERROR", databaseError.getMessage());
+                Toast.makeText(LoginActivity.this, databaseError.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
         Toast.makeText(LoginActivity.this, "Google Play Services error", Toast.LENGTH_SHORT).show();
     }
 
-    //FINISH IMPLEMENTATION
-    public boolean isNewAuthenticatedUser(String userId){
-      return false;
-    }
+
 }
