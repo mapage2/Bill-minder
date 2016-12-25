@@ -264,7 +264,7 @@ public class LoginActivity extends AppCompatActivity implements
                         Intent i = new Intent(LoginActivity.this, MainActivity.class);
                         writeNewAuthenticatedUser(mAuth.getCurrentUser());
                         startActivity(i);
-                        signOut();
+                        //signOut();
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
