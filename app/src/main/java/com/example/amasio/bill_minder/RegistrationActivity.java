@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.text.TextUtils;
+import android.support.v7.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,6 +28,8 @@ public class RegistrationActivity extends AppCompatActivity {
     EditText lastName;
     EditText email;
     EditText password;
+    Toolbar toolbar;
+
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -39,6 +42,10 @@ public class RegistrationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
+
+        toolbar = (Toolbar) findViewById(R.id.app_toolbar);
+        toolbar.setTitle("Account Registration");
+        setSupportActionBar(toolbar);
 
         firstName = (EditText) findViewById(R.id.txtFirstName);
         lastName = (EditText) findViewById(R.id.txtLastName);

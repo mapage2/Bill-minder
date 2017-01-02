@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -52,6 +53,7 @@ public class LoginActivity extends AppCompatActivity implements
     EditText email;
     EditText password;
     SignInButton googleSignInBtn;
+    Toolbar toolbar;
 
     LoginButton facebookLoginBtn;
     CallbackManager mCallbackManager;
@@ -71,6 +73,10 @@ public class LoginActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_login);
+
+        toolbar = (Toolbar) findViewById(R.id.app_toolbar);
+        toolbar.setTitle("Account Login");
+        setSupportActionBar(toolbar);
 
         email = (EditText) findViewById(R.id.txtEmail);
         password = (EditText) findViewById(R.id.txtPassword);
@@ -172,7 +178,7 @@ public class LoginActivity extends AppCompatActivity implements
                             if (task.isSuccessful()) {
                                 Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
                                 Toast.makeText(LoginActivity.this, "Welcome "+userEmail, Toast.LENGTH_LONG).show();
-                                Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                Intent i = new Intent(LoginActivity.this, OverviewActivity.class);
                                 startActivity(i);
                                 signOut();
                             }else{
@@ -235,7 +241,7 @@ public class LoginActivity extends AppCompatActivity implements
                         progressDialog.dismiss();
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
                         Toast.makeText(LoginActivity.this, "Welcome "+mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
-                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                        Intent i = new Intent(LoginActivity.this, OverviewActivity.class);
                         writeNewAuthenticatedUser(mAuth.getCurrentUser());
                         startActivity(i);
                         signOut();
@@ -261,7 +267,7 @@ public class LoginActivity extends AppCompatActivity implements
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
                         Toast.makeText(LoginActivity.this, "Welcome "+mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
-                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                        Intent i = new Intent(LoginActivity.this, OverviewActivity.class);
                         writeNewAuthenticatedUser(mAuth.getCurrentUser());
                         startActivity(i);
                         signOut();
