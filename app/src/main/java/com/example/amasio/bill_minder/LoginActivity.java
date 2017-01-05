@@ -141,8 +141,6 @@ public class LoginActivity extends AppCompatActivity implements
                 .build();
 
         mUserReference = mRootReference.child("User");
-
-
     }
 
     @Override
@@ -180,7 +178,6 @@ public class LoginActivity extends AppCompatActivity implements
                                 Toast.makeText(LoginActivity.this, "Welcome "+userEmail, Toast.LENGTH_LONG).show();
                                 Intent i = new Intent(LoginActivity.this, OverviewActivity.class);
                                 startActivity(i);
-                                signOut();
                             }else{
                                 Log.e("ERROR", task.getException().toString());
                                 Toast.makeText(LoginActivity.this, "Incorrect Email or password",
@@ -244,7 +241,6 @@ public class LoginActivity extends AppCompatActivity implements
                         Intent i = new Intent(LoginActivity.this, OverviewActivity.class);
                         writeNewAuthenticatedUser(mAuth.getCurrentUser());
                         startActivity(i);
-                        signOut();
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
@@ -270,7 +266,6 @@ public class LoginActivity extends AppCompatActivity implements
                         Intent i = new Intent(LoginActivity.this, OverviewActivity.class);
                         writeNewAuthenticatedUser(mAuth.getCurrentUser());
                         startActivity(i);
-                        signOut();
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.

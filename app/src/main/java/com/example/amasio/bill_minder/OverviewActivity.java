@@ -1,17 +1,31 @@
 package com.example.amasio.bill_minder;
 
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.Toolbar;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.View;
 import android.widget.Toast;
 import android.widget.FrameLayout;
 
-public class OverviewActivity extends AppCompatActivity {
+import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+public class OverviewActivity extends AppCompatActivity implements
+        GoogleApiClient.OnConnectionFailedListener{
 
     private Toolbar toolbar;
     FloatingActionButton fabNewItem;
@@ -28,6 +42,17 @@ public class OverviewActivity extends AppCompatActivity {
     Animation hide_fab_subscription;
     Animation show_fab_expense;
     Animation hide_fab_expense;
+
+    private static String TAG = "Overview";
+
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseUser mUser;
+
+    private GoogleApiClient mGoogleApiClient;
+
+    //ADD REFERENCES FOR DATA STRUCTURES
+    private DatabaseReference mRootReference = FirebaseDatabase.getInstance().getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +113,53 @@ public class OverviewActivity extends AppCompatActivity {
                 Toast.makeText(getApplication(), "New expense coming soon", Toast.LENGTH_SHORT).show();
             }
         });
+
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                    Intent i = new Intent(OverviewActivity.this, LoginActivity.class);
+                    startActivity(i);
+                }
+            }
+        };
+    }
+
+    @Override
+    public void onStart() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+
+    public void signOut(View v) {
+
+        mAuth.signOut();
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+        LoginManager.getInstance().logOut();
     }
 
     private void expandFabMenu(){
@@ -142,5 +214,11 @@ public class OverviewActivity extends AppCompatActivity {
         fabExpense.setLayoutParams(layoutParams3);
         fabExpense.startAnimation(hide_fab_expense);
         fabExpense.setClickable(true);
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+        Toast.makeText(OverviewActivity.this, "Google Play Services error", Toast.LENGTH_SHORT).show();
     }
 }
