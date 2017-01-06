@@ -176,7 +176,7 @@ public class LoginActivity extends AppCompatActivity implements
                             if (task.isSuccessful()) {
                                 Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
                                 Toast.makeText(LoginActivity.this, "Welcome "+userEmail, Toast.LENGTH_LONG).show();
-                                Intent i = new Intent(LoginActivity.this, OverviewActivity.class);
+                                Intent i = new Intent(LoginActivity.this, AccountOverviewActivity.class);
                                 startActivity(i);
                             }else{
                                 Log.e("ERROR", task.getException().toString());
@@ -238,7 +238,7 @@ public class LoginActivity extends AppCompatActivity implements
                         progressDialog.dismiss();
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
                         Toast.makeText(LoginActivity.this, "Welcome "+mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
-                        Intent i = new Intent(LoginActivity.this, OverviewActivity.class);
+                        Intent i = new Intent(LoginActivity.this, AccountOverviewActivity.class);
                         writeNewAuthenticatedUser(mAuth.getCurrentUser());
                         startActivity(i);
                         // If sign in fails, display a message to the user. If sign in succeeds
@@ -263,7 +263,7 @@ public class LoginActivity extends AppCompatActivity implements
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
                         Toast.makeText(LoginActivity.this, "Welcome "+mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
-                        Intent i = new Intent(LoginActivity.this, OverviewActivity.class);
+                        Intent i = new Intent(LoginActivity.this, AccountOverviewActivity.class);
                         writeNewAuthenticatedUser(mAuth.getCurrentUser());
                         startActivity(i);
                         // If sign in fails, display a message to the user. If sign in succeeds

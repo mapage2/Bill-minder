@@ -47,6 +47,10 @@
             android:value="@string/facebook_app_id" />
 
         <activity android:name=".OverviewActivity" />
+        <activity
+            android:name=".AccountOverviewActivity"
+            android:label="@string/title_activity_account_overview"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>
