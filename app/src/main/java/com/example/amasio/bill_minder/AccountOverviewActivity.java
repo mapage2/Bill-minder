@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -20,6 +21,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
@@ -35,12 +37,13 @@ import com.google.firebase.database.FirebaseDatabase;
 public class AccountOverviewActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
 
+    TextView navName;
+    TextView navEmail;
     FloatingActionButton fabNewItem;
     FloatingActionButton fabBill;
     FloatingActionButton fabSubscription;
     FloatingActionButton fabExpense;
     CoordinatorLayout baseLayout;
-    Button button2;
 
     private boolean FAB_Status = false;
 
@@ -62,12 +65,14 @@ public class AccountOverviewActivity extends AppCompatActivity
     //ADD REFERENCES FOR DATA STRUCTURES
     private DatabaseReference mRootReference = FirebaseDatabase.getInstance().getReference();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_overview);
         Toolbar toolbar = (Toolbar) findViewById(R.id.overview_toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Account Overview");
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -77,14 +82,16 @@ public class AccountOverviewActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View header = navigationView.getHeaderView(0);
 
         baseLayout = (CoordinatorLayout) findViewById(R.id.activity_overview);
+        navName = (TextView) header.findViewById(R.id.nav_name_textview);
+        navEmail = (TextView) header.findViewById(R.id.nav_email_textView);
 
         fabNewItem = (FloatingActionButton) findViewById(R.id.fab_new_item);
         fabBill = (FloatingActionButton) findViewById(R.id.fab_bill);
         fabSubscription = (FloatingActionButton) findViewById(R.id.fab_subscription);
         fabExpense = (FloatingActionButton) findViewById(R.id.fab_expense);
-        button2 = (Button) findViewById(R.id.button2);
 
         show_fab_bill = AnimationUtils.loadAnimation(getApplication(), R.anim.fab_bill_show);
         hide_fab_bill = AnimationUtils.loadAnimation(getApplication(), R.anim.fab_bill_hide);
@@ -146,6 +153,11 @@ public class AccountOverviewActivity extends AppCompatActivity
                 }
             }
         };
+        String name = mAuth.getCurrentUser().getDisplayName();
+        navName.setText(name);
+
+        String email = mAuth.getCurrentUser().getEmail();
+        navEmail.setText(email);
     }
 
     @Override
@@ -197,7 +209,9 @@ public class AccountOverviewActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            Toast.makeText(AccountOverviewActivity.this, "Settings Page coming soon", Toast.LENGTH_SHORT).show();
+        }else if (id == R.id.action_profile) {
+            Toast.makeText(AccountOverviewActivity.this, "Profile Page coming soon", Toast.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);
