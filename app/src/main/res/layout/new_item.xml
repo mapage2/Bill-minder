@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_menu_compass"
+        android:src="@drawable/ic_action_bill"
         android:visibility="invisible"
         app:backgroundTint="@color/colorFabBill"
         app:fabSize="mini" />
