@@ -1,9 +1,12 @@
 package com.example.amasio.bill_minder;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,17 +18,29 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class AccountOverviewActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
 
     FloatingActionButton fabNewItem;
     FloatingActionButton fabBill;
     FloatingActionButton fabSubscription;
     FloatingActionButton fabExpense;
     CoordinatorLayout baseLayout;
+    Button button2;
 
     private boolean FAB_Status = false;
 
@@ -37,6 +52,15 @@ public class AccountOverviewActivity extends AppCompatActivity
     Animation hide_fab_expense;
 
     private static String TAG = "Account Overview";
+
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseUser mUser;
+
+    private GoogleApiClient mGoogleApiClient;
+
+    //ADD REFERENCES FOR DATA STRUCTURES
+    private DatabaseReference mRootReference = FirebaseDatabase.getInstance().getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +84,7 @@ public class AccountOverviewActivity extends AppCompatActivity
         fabBill = (FloatingActionButton) findViewById(R.id.fab_bill);
         fabSubscription = (FloatingActionButton) findViewById(R.id.fab_subscription);
         fabExpense = (FloatingActionButton) findViewById(R.id.fab_expense);
+        button2 = (Button) findViewById(R.id.button2);
 
         show_fab_bill = AnimationUtils.loadAnimation(getApplication(), R.anim.fab_bill_show);
         hide_fab_bill = AnimationUtils.loadAnimation(getApplication(), R.anim.fab_bill_hide);
@@ -104,6 +129,46 @@ public class AccountOverviewActivity extends AppCompatActivity
                 Toast.makeText(getApplication(), "New expense coming soon", Toast.LENGTH_SHORT).show();
             }
         });
+
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                    Intent i = new Intent(AccountOverviewActivity.this, LoginActivity.class);
+                    startActivity(i);
+                }
+            }
+        };
+    }
+
+    @Override
+    public void onStart() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
     }
 
     @Override
@@ -144,23 +209,36 @@ public class AccountOverviewActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_bills) {
 
-        } else if (id == R.id.nav_slideshow) {
+            Toast.makeText(AccountOverviewActivity.this, "Bills interface coming soon", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_subscriptions) {
 
-        } else if (id == R.id.nav_manage) {
+            Toast.makeText(AccountOverviewActivity.this, "Subscription interface coming soon", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_expenses) {
 
-        } else if (id == R.id.nav_share) {
+            Toast.makeText(AccountOverviewActivity.this, "Expenses interface coming soon", Toast.LENGTH_SHORT).show();
+        }/* else if (id == R.id.nav_manage) {
 
-        } else if (id == R.id.nav_send) {
+        }*/
+        else if (id == R.id.nav_list_view) {
 
+            Toast.makeText(AccountOverviewActivity.this, "List interface coming soon", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_signout) {
+
+            signOut();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void signOut() {
+
+        mAuth.signOut();
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+        LoginManager.getInstance().logOut();
     }
 
     private void expandFabMenu(){
@@ -215,5 +293,10 @@ public class AccountOverviewActivity extends AppCompatActivity
         fabExpense.setLayoutParams(layoutParams3);
         fabExpense.startAnimation(hide_fab_expense);
         fabExpense.setClickable(true);
+    }
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+        Toast.makeText(AccountOverviewActivity.this, "Google Play Services error", Toast.LENGTH_SHORT).show();
     }
 }
