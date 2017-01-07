@@ -1,6 +1,7 @@
 package com.example.amasio.bill_minder;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
@@ -21,6 +22,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,12 +35,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
 
 public class AccountOverviewActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
 
     TextView navName;
     TextView navEmail;
+    ImageView navImage;
     FloatingActionButton fabNewItem;
     FloatingActionButton fabBill;
     FloatingActionButton fabSubscription;
@@ -87,6 +91,7 @@ public class AccountOverviewActivity extends AppCompatActivity
         baseLayout = (CoordinatorLayout) findViewById(R.id.activity_overview);
         navName = (TextView) header.findViewById(R.id.nav_name_textview);
         navEmail = (TextView) header.findViewById(R.id.nav_email_textView);
+        navImage = (ImageView) header.findViewById(R.id.imageView);
 
         fabNewItem = (FloatingActionButton) findViewById(R.id.fab_new_item);
         fabBill = (FloatingActionButton) findViewById(R.id.fab_bill);
@@ -158,6 +163,11 @@ public class AccountOverviewActivity extends AppCompatActivity
 
         String email = mAuth.getCurrentUser().getEmail();
         navEmail.setText(email);
+
+        Uri picUrl = mAuth.getCurrentUser().getPhotoUrl();
+        if(!(picUrl == null)) {
+            Picasso.with(this).load(picUrl).into(navImage);
+        }
     }
 
     @Override

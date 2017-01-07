@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -62,6 +63,10 @@ public class RegistrationActivity extends AppCompatActivity {
                 if(mUser != null){
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + mUser.getUid());
+                    String displayName = firstName.getText().toString() + " " + lastName.getText().toString();
+                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                            .setDisplayName(displayName).build();
+                    mUser.updateProfile(profileUpdates);
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
