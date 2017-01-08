@@ -4,15 +4,15 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_bills"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_menu_bill"
             android:title="Bills" />
         <item
             android:id="@+id/nav_subscriptions"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_menu_subscription"
             android:title="Subscriptions" />
         <item
             android:id="@+id/nav_expenses"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_menu_expense"
             android:title="Expenses" />
         <!--<item
             android:id="@+id/nav_manage"
@@ -24,11 +24,11 @@
         <menu>
             <item
                 android:id="@+id/nav_list_view"
-                android:icon="@drawable/ic_menu_share"
+                android:icon="@drawable/ic_menu_list"
                 android:title="Show as list" />
             <item
                 android:id="@+id/nav_signout"
-                android:icon="@drawable/ic_menu_send"
+                android:icon="@drawable/ic_action_signout"
                 android:title="Sign out" />
         </menu>
     </item>
