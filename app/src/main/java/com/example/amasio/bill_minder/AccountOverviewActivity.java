@@ -9,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -47,7 +48,6 @@ public class AccountOverviewActivity extends AppCompatActivity
     FloatingActionButton fabBill;
     FloatingActionButton fabSubscription;
     FloatingActionButton fabExpense;
-    CoordinatorLayout baseLayout;
 
     private boolean FAB_Status = false;
 
@@ -78,7 +78,7 @@ public class AccountOverviewActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Account Overview");
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.account_overview_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -88,7 +88,6 @@ public class AccountOverviewActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         View header = navigationView.getHeaderView(0);
 
-        baseLayout = (CoordinatorLayout) findViewById(R.id.activity_overview);
         navName = (TextView) header.findViewById(R.id.nav_name_textview);
         navEmail = (TextView) header.findViewById(R.id.nav_email_textView);
         navImage = (ImageView) header.findViewById(R.id.imageView);
@@ -165,7 +164,7 @@ public class AccountOverviewActivity extends AppCompatActivity
         navEmail.setText(email);
 
         Uri picUrl = mAuth.getCurrentUser().getPhotoUrl();
-        if(!(picUrl == null)) {
+        if (!(picUrl == null)) {
             Picasso.with(this).load(picUrl).into(navImage);
         }
     }
@@ -195,7 +194,7 @@ public class AccountOverviewActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.account_overview_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -220,7 +219,7 @@ public class AccountOverviewActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Toast.makeText(AccountOverviewActivity.this, "Settings Page coming soon", Toast.LENGTH_SHORT).show();
-        }else if (id == R.id.action_profile) {
+        } else if (id == R.id.action_profile) {
             Toast.makeText(AccountOverviewActivity.this, "Profile Page coming soon", Toast.LENGTH_SHORT).show();
         }
 
@@ -244,8 +243,7 @@ public class AccountOverviewActivity extends AppCompatActivity
             Toast.makeText(AccountOverviewActivity.this, "Expenses interface coming soon", Toast.LENGTH_SHORT).show();
         }/* else if (id == R.id.nav_manage) {
 
-        }*/
-        else if (id == R.id.nav_list_view) {
+        }*/ else if (id == R.id.nav_list_view) {
 
             Toast.makeText(AccountOverviewActivity.this, "List interface coming soon", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_signout) {
@@ -253,7 +251,7 @@ public class AccountOverviewActivity extends AppCompatActivity
             signOut();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.account_overview_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -265,7 +263,7 @@ public class AccountOverviewActivity extends AppCompatActivity
         LoginManager.getInstance().logOut();
     }
 
-    private void expandFabMenu(){
+    private void expandFabMenu() {
 
         //Bill FAB
         FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fabBill.getLayoutParams();
