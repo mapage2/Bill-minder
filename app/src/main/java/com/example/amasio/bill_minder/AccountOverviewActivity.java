@@ -39,24 +39,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 public class AccountOverviewActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener,
+        AccountOverviewFragment.onNewItemSelectedListener{
 
     TextView navName;
     TextView navEmail;
     ImageView navImage;
-    FloatingActionButton fabNewItem;
-    FloatingActionButton fabBill;
-    FloatingActionButton fabSubscription;
-    FloatingActionButton fabExpense;
-
-    private boolean FAB_Status = false;
-
-    Animation show_fab_bill;
-    Animation hide_fab_bill;
-    Animation show_fab_subscription;
-    Animation hide_fab_subscription;
-    Animation show_fab_expense;
-    Animation hide_fab_expense;
 
     private static String TAG = "Account Overview";
 
@@ -92,55 +80,6 @@ public class AccountOverviewActivity extends AppCompatActivity
         navEmail = (TextView) header.findViewById(R.id.nav_email_textView);
         navImage = (ImageView) header.findViewById(R.id.imageView);
 
-        fabNewItem = (FloatingActionButton) findViewById(R.id.fab_new_item);
-        fabBill = (FloatingActionButton) findViewById(R.id.fab_bill);
-        fabSubscription = (FloatingActionButton) findViewById(R.id.fab_subscription);
-        fabExpense = (FloatingActionButton) findViewById(R.id.fab_expense);
-
-        show_fab_bill = AnimationUtils.loadAnimation(getApplication(), R.anim.fab_bill_show);
-        hide_fab_bill = AnimationUtils.loadAnimation(getApplication(), R.anim.fab_bill_hide);
-        show_fab_subscription = AnimationUtils.loadAnimation(getApplication(), R.anim.fab_subscription_show);
-        hide_fab_subscription = AnimationUtils.loadAnimation(getApplication(), R.anim.fab_subscription_hide);
-        show_fab_expense = AnimationUtils.loadAnimation(getApplication(), R.anim.fab_expense_show);
-        hide_fab_expense = AnimationUtils.loadAnimation(getApplication(), R.anim.fab_expense_hide);
-
-        fabNewItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if (FAB_Status == false) {
-                    //Display FAB menu
-                    expandFabMenu();
-                    FAB_Status = true;
-                } else {
-                    //Close FAB menu
-                    hideFabMenu();
-                    FAB_Status = false;
-                }
-            }
-        });
-
-        fabBill.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplication(), "New bill coming soon", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        fabSubscription.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplication(), "New subscription coming soon", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        fabExpense.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplication(), "New expense coming soon", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -157,6 +96,7 @@ public class AccountOverviewActivity extends AppCompatActivity
                 }
             }
         };
+
         String name = mAuth.getCurrentUser().getDisplayName();
         navName.setText(name);
 
@@ -166,6 +106,27 @@ public class AccountOverviewActivity extends AppCompatActivity
         Uri picUrl = mAuth.getCurrentUser().getPhotoUrl();
         if (!(picUrl == null)) {
             Picasso.with(this).load(picUrl).into(navImage);
+        }
+
+        if (findViewById(R.id.account_overview_layout) != null) {
+
+            // However, if we're being restored from a previous state,
+            // then we don't need to do anything and should return or else
+            // we could end up with overlapping fragments.
+            if (savedInstanceState != null) {
+                return;
+            }
+
+            // Create a new Fragment to be placed in the activity layout
+            AccountOverviewFragment overviewFragment = new AccountOverviewFragment();
+
+            // In case this activity was started with special instructions from an
+            // Intent, pass the Intent's extras to the fragment as arguments
+            overviewFragment.setArguments(getIntent().getExtras());
+
+            // Add the fragment to the 'fragment_container' FrameLayout
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_frame, overviewFragment).commit();
         }
     }
 
@@ -263,62 +224,14 @@ public class AccountOverviewActivity extends AppCompatActivity
         LoginManager.getInstance().logOut();
     }
 
-    private void expandFabMenu() {
-
-        //Bill FAB
-        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fabBill.getLayoutParams();
-        layoutParams.rightMargin += (int) (fabBill.getWidth() * 1.7);
-        layoutParams.bottomMargin += (int) (fabBill.getHeight() * 0.25);
-        fabBill.setLayoutParams(layoutParams);
-        fabBill.startAnimation(show_fab_bill);
-        fabBill.setClickable(true);
-
-        //Subscription FAB
-        FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) fabSubscription.getLayoutParams();
-        layoutParams2.rightMargin += (int) (fabSubscription.getWidth() * 1.5);
-        layoutParams2.bottomMargin += (int) (fabSubscription.getHeight() * 1.5);
-        fabSubscription.setLayoutParams(layoutParams2);
-        fabSubscription.startAnimation(show_fab_subscription);
-        fabSubscription.setClickable(true);
-
-        //Expense FAB
-        FrameLayout.LayoutParams layoutParams3 = (FrameLayout.LayoutParams) fabExpense.getLayoutParams();
-        layoutParams3.rightMargin += (int) (fabExpense.getWidth() * 0.25);
-        layoutParams3.bottomMargin += (int) (fabExpense.getHeight() * 1.7);
-        fabExpense.setLayoutParams(layoutParams3);
-        fabExpense.startAnimation(show_fab_expense);
-        fabExpense.setClickable(true);
-    }
-
-    private void hideFabMenu() {
-
-        //Bill FAB
-        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fabBill.getLayoutParams();
-        layoutParams.rightMargin -= (int) (fabBill.getWidth() * 1.7);
-        layoutParams.bottomMargin -= (int) (fabBill.getHeight() * 0.25);
-        fabBill.setLayoutParams(layoutParams);
-        fabBill.startAnimation(hide_fab_bill);
-        fabBill.setClickable(true);
-
-        //Subscription FAB
-        FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) fabSubscription.getLayoutParams();
-        layoutParams2.rightMargin -= (int) (fabSubscription.getWidth() * 1.5);
-        layoutParams2.bottomMargin -= (int) (fabSubscription.getHeight() * 1.5);
-        fabSubscription.setLayoutParams(layoutParams2);
-        fabSubscription.startAnimation(hide_fab_subscription);
-        fabSubscription.setClickable(true);
-
-        //Expense FAB
-        FrameLayout.LayoutParams layoutParams3 = (FrameLayout.LayoutParams) fabExpense.getLayoutParams();
-        layoutParams3.rightMargin -= (int) (fabExpense.getWidth() * 0.25);
-        layoutParams3.bottomMargin -= (int) (fabExpense.getHeight() * 1.7);
-        fabExpense.setLayoutParams(layoutParams3);
-        fabExpense.startAnimation(hide_fab_expense);
-        fabExpense.setClickable(true);
-    }
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed:" + connectionResult);
         Toast.makeText(AccountOverviewActivity.this, "Google Play Services error", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNewItemSelected(int button) {
+        //to be implemented later
     }
 }
