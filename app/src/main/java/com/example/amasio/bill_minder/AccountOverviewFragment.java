@@ -4,7 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,10 @@ public class AccountOverviewFragment extends Fragment{
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private final int BILL = 1;
+    private final int SUBSCRIPTION = 2;
+    private final int EXPENSE = 3;
 
     View overviewInflater;
 
@@ -96,21 +101,24 @@ public class AccountOverviewFragment extends Fragment{
         fabBill.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "New bill coming soon", Toast.LENGTH_SHORT).show();
+                itemListener.onNewItemSelected(BILL);
+                //Toast.makeText(getActivity(), "New bill coming soon", Toast.LENGTH_SHORT).show();
             }
         });
 
         fabSubscription.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "New subscription coming soon", Toast.LENGTH_SHORT).show();
+                itemListener.onNewItemSelected(SUBSCRIPTION);
+                //Toast.makeText(getActivity(), "New subscription coming soon", Toast.LENGTH_SHORT).show();
             }
         });
 
         fabExpense.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "New expense coming soon", Toast.LENGTH_SHORT).show();
+                itemListener.onNewItemSelected(EXPENSE);
+                //Toast.makeText(getActivity(), "New expense coming soon", Toast.LENGTH_SHORT).show();
             }
         });
 

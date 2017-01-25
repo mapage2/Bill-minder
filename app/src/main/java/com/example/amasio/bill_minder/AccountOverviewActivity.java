@@ -4,12 +4,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBar;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,10 +17,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,13 +34,16 @@ import com.squareup.picasso.Picasso;
 
 public class AccountOverviewActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener,
-        AccountOverviewFragment.onNewItemSelectedListener{
+        AccountOverviewFragment.onNewItemSelectedListener, NewBillFragment.newBillListener{
 
     TextView navName;
     TextView navEmail;
     ImageView navImage;
 
     private static String TAG = "Account Overview";
+    private final int BILL_FRAGMENT = 1;
+    private final int SUBSCRIPTION_FRAGMENT = 2;
+    private final int EXPENSE_FRAGMENT = 3;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -124,8 +121,8 @@ public class AccountOverviewActivity extends AppCompatActivity
             // Intent, pass the Intent's extras to the fragment as arguments
             overviewFragment.setArguments(getIntent().getExtras());
 
-            // Add the fragment to the 'fragment_container' FrameLayout
-            getSupportFragmentManager().beginTransaction()
+
+            getFragmentManager().beginTransaction()
                     .add(R.id.fragment_frame, overviewFragment).commit();
         }
     }
@@ -232,6 +229,23 @@ public class AccountOverviewActivity extends AppCompatActivity
 
     @Override
     public void onNewItemSelected(int button) {
-        //to be implemented later
+
+        if(button == BILL_FRAGMENT){
+
+            Toast.makeText(AccountOverviewActivity.this, "Bills debug", Toast.LENGTH_SHORT).show();
+
+            NewBillFragment bill = new NewBillFragment();
+            FragmentManager manager = getFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+            transaction.replace(R.id.fragment_frame, bill);
+            transaction.addToBackStack(null);
+            transaction.commit();
+
+        }
+    }
+
+    @Override
+    public void onNewBill(Uri uri) {
+
     }
 }
