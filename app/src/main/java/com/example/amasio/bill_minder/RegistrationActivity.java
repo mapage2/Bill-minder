@@ -133,7 +133,7 @@ public class RegistrationActivity extends AppCompatActivity {
                     });
         } else{
             progressDialog.dismiss();
-            Toast.makeText(RegistrationActivity.this, "Invalid input", Toast.LENGTH_SHORT);
+            Toast.makeText(RegistrationActivity.this, "Invalid input", Toast.LENGTH_SHORT).show();
         }
     }
 

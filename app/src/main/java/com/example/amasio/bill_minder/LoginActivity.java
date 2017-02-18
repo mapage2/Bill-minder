@@ -187,7 +187,7 @@ public class LoginActivity extends AppCompatActivity implements
                     });
         } else{
             progressDialog.dismiss();
-            Toast.makeText(LoginActivity.this, "Login Faliure",Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "Login Failure",Toast.LENGTH_SHORT).show();
         }
     }
 

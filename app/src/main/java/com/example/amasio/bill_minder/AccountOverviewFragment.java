@@ -102,6 +102,8 @@ public class AccountOverviewFragment extends Fragment{
             @Override
             public void onClick(View v) {
                 itemListener.onNewItemSelected(BILL);
+                hideFabMenu();
+                FAB_Status = false;
                 //Toast.makeText(getActivity(), "New bill coming soon", Toast.LENGTH_SHORT).show();
             }
         });
@@ -110,6 +112,8 @@ public class AccountOverviewFragment extends Fragment{
             @Override
             public void onClick(View v) {
                 itemListener.onNewItemSelected(SUBSCRIPTION);
+                hideFabMenu();
+                FAB_Status = false;
                 //Toast.makeText(getActivity(), "New subscription coming soon", Toast.LENGTH_SHORT).show();
             }
         });
@@ -118,6 +122,8 @@ public class AccountOverviewFragment extends Fragment{
             @Override
             public void onClick(View v) {
                 itemListener.onNewItemSelected(EXPENSE);
+                hideFabMenu();
+                FAB_Status = false;
                 //Toast.makeText(getActivity(), "New expense coming soon", Toast.LENGTH_SHORT).show();
             }
         });

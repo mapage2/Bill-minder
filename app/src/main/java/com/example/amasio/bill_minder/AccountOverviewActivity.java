@@ -232,8 +232,6 @@ public class AccountOverviewActivity extends AppCompatActivity
 
         if(button == BILL_FRAGMENT){
 
-            Toast.makeText(AccountOverviewActivity.this, "Bills debug", Toast.LENGTH_SHORT).show();
-
             NewBillFragment bill = new NewBillFragment();
             FragmentManager manager = getFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
