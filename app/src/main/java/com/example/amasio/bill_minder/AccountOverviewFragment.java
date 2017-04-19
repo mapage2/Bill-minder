@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 public class AccountOverviewFragment extends Fragment{
 
-    onNewItemSelectedListener itemListener;
+    private onNewItemSelectedListener itemListener;
 
     FloatingActionButton fabNewItem;
     FloatingActionButton fabBill;

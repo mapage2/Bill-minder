@@ -243,7 +243,9 @@ public class AccountOverviewActivity extends AppCompatActivity
     }
 
     @Override
-    public void onNewBill(Uri uri) {
+    public void onNewBill() {
 
+        FragmentManager manager = getFragmentManager();
+        manager.popBackStackImmediate();
     }
 }

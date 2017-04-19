@@ -1,7 +1,9 @@
 package com.example.amasio.bill_minder;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -57,13 +59,12 @@ public class NewBillFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private newBillListener mListener;
+    private newBillListener actionListener;
 
     View newBillInflater;
 
     public interface newBillListener {
-        // TODO: Update argument type and name
-        void onNewBill(Uri uri);
+        void onNewBill();
     }
     /**
      * Use this factory method to create a new instance of
@@ -123,22 +124,21 @@ public class NewBillFragment extends Fragment {
         });
 
         btnCancel = (Button) newBillInflater.findViewById(R.id.btn_cancel);
+        btnCancel.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                cancelAction();
+            }
+        });
 
         return newBillInflater;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onNewBill(uri);
-        }
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof newBillListener) {
-            mListener = (newBillListener) context;
+            actionListener = (newBillListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -148,7 +148,13 @@ public class NewBillFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        actionListener = null;
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        actionListener = null;
     }
 
     public boolean validateForm(){
@@ -247,14 +253,35 @@ public class NewBillFragment extends Fragment {
             progress = new ProgressTask();
             progress.execute(bill);
 
+            //Toast.makeText(getActivity(), "Bill added", Toast.LENGTH_SHORT).show();
 
-
-
-
+            actionListener.onNewBill();
         }else{
 
             Toast.makeText(getActivity(), "Invalid input", Toast.LENGTH_SHORT).show();
         }
+
+    }
+
+    public void cancelAction(){
+
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int choice) {
+                switch (choice) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        actionListener.onNewBill();
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("Cancel Bill Add?")
+                .setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
     }
 
     class ProgressTask extends AsyncTask<Bill, Void, Void>{
@@ -276,13 +303,6 @@ public class NewBillFragment extends Fragment {
         @Override
         protected Void doInBackground(Bill... bill) {
 
-//            try {
-//                String userId = mAuth.getCurrentUser().getUid();
-//                mBillReference.child(userId).setValue(bill);
-//            } catch (DatabaseException e) {
-//
-//                Log.e(TAG, "Database issue, Bill not added");
-//            }
             DatabaseReference newBill = mBillReference.push();
             StringBuilder string = new StringBuilder(newBill.getKey());
             string = string.deleteCharAt(0);
@@ -297,7 +317,9 @@ public class NewBillFragment extends Fragment {
         protected void onPostExecute(Void voids){
 
             super.onPostExecute(voids);
-            Toast.makeText(getActivity(), "Bill added", Toast.LENGTH_SHORT).show();
+            if(isCancelled()) {
+                return;
+            }
             Log.d(TAG, "bill added successfully");
             progressDialog.dismiss();
             progressDialog = null;
