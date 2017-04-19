@@ -253,7 +253,7 @@ public class NewBillFragment extends Fragment {
             progress = new ProgressTask();
             progress.execute(bill);
 
-            //Toast.makeText(getActivity(), "Bill added", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Bill added", Toast.LENGTH_SHORT).show();
 
             actionListener.onNewBill();
         }else{
